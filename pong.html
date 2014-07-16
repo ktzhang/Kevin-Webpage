@@ -7,9 +7,15 @@
 		$(document).ready(function() {
 			//Scoping function to log all the stuff
 			(function() {
+				//Constants/settings
 				var paddleHeight = 100;
+				var paddleWidth = 10;
 				var maxPaddles = 2;
+				var ballHeight = 20;
 				var ballSpeed = 10; 	//interval for ball movement
+
+
+				//Game Variables
 				var gameStart = true;
 
 				//Instantiate the two paddles
@@ -22,11 +28,12 @@
 				//Setting 1 paddle to the right
 				var windowWidth = $(window).width();
 				console.log(windowWidth);
-				paddleArray[0].element.css("left", 25);
-				paddleArray[1].element.css("right", 25);
+				paddleArray[0].element.css("left", 25).width(paddleWidth);
+				paddleArray[1].element.css("right", 25).width(paddleWidth);
 
 				//Instantiating the ball
 				var ball = new Ball($(".ball"));
+				ball.element.width(ballHeight).height(ballHeight);
 
 				var ballMoving = true;
 				var moveBallFunction = function() {
@@ -174,13 +181,10 @@
 	</script>
 	<style>
 		.bar {
-			width:10px;
 			position: absolute;
 			background-color:black;
 		}
 		.ball {
-			width:50px;
-			height:50px;
 			position: absolute;
 			top:10px;
 			left:1000px;
