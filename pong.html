@@ -49,6 +49,7 @@
 							break;
 						default:
 							keyPressed = null
+							ball.move(paddleArray);
 							break;
 					}
 					console.log("KeyPressed = " + keyPressed);
@@ -129,13 +130,13 @@
 			});	
 
 			//Bouncing left paddle
-			if(newXPos == paddleArray[0].element.position().left + paddleArray[0].element.width() && touchPaddle[0]) {
+			if(newXPos + this.speed == paddleArray[0].element.position().left + paddleArray[0].element.width() && touchPaddle[0]) {
 				this.prevX = !this.prevX;
 				didSwitch = true;
 			}
 
 			//Bouncing right paddle
-			if(newXPos + ballWidth == paddleArray[1].element.position().left - paddleArray[1].element.width() && touchPaddle[1]) {
+			if(newXPos + ballWidth - this.speed == paddleArray[1].element.position().left && touchPaddle[1]) {
 				this.prevX = !this.prevX;
 				didSwitch = true;
 			}
