@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="http://code.jquery.com/jquery-latest.min.js"
+        type="text/javascript"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			//Scoping function to log all the stuff
+			(function() {
+				var paddleHeight = 100;
+				var maxPaddles = 2;
+				var gameStart = true;
+
+				//Instantiate the two paddles
+				$(".bar").height(paddleHeight);
+				var paddleArray = [];
+				$(".bar").each(function( index ) {
+					paddleArray[index] = new Paddle($(this));
+				});
+
+				//Setting 1 paddle to the right
+				var windowWidth = $(window).width();
+				console.log(windowWidth);
+				paddleArray[0].element.css("left", 25);
+				paddleArray[1].element.css("right", 25);
+
+				//Instantiating the ball
+				var ball = new Ball($(".ball"));
+
+				//Handling keypresses
+				$("body").keypress(function(event) {
+					var keyPressed;
+					switch(event.keyCode) {
+						case 47:
+							keyPressed = "/"
+							paddleArray[1].move(-1);
+							break;
+						case 39:
+							paddleArray[1].move(1);
+							keyPressed = "'"
+							break;
+						case 122:
+							paddleArray[0].move(-1);
+							keyPressed = "z"
+							break;
+						case 97:
+							paddleArray[0].move(1);
+							keyPressed = "a"
+							break;
+						default:
+							keyPressed = null
+							break;
+					}
+					console.log("KeyPressed = " + keyPressed);
+		  		});
+
+
+				//Starting the animation loop!
+
+				setInterval(function() {
+					ball.move(paddleArray);
+				}, 10);
+				// while(gameStart && counter < 50) {
+
+				// 	ball.move();
+				// 	counter++;
+				// }
+
+			})();	
+
+		});
+
+		//------Paddle Class
+		function Paddle(element) {
+			//Stores the html element 
+			this.element = element;
+			this.sens = 40;
+			this.paddleHeight = element.height();
+		}
+
+		//------Moving the paddle by offset
+		Paddle.prototype.move = function(offset) {
+			var movement = this.sens * -offset;
+			var newPos = this.getPos() + movement;
+			if(newPos < 0 || newPos + this.paddleHeight > $(window).height()) {
+				return 0;
+			}
+			this.element.animate({
+			  top: newPos
+			}, 100 );
+
+			return 1;
+
+		}
+		Paddle.prototype.getPos = function() {
+			return this.element.position().top;
+		}
+
+
+
+		//------Ball Class
+		function Ball(element) {
+			this.element = element;
+			this.speed = 5;
+			this.prevX = 1;
+			this.prevY = 1;
+			this.width = element.width();
+			this.height = element.height();
+		}
+		Ball.prototype.move = function(paddleArray) {
+			var touchPaddle = [];
+
+			var oldPos = this.element.position(); 
+			var xOffset = this.prevX ? 1 : -1;
+			var yOffset = this.prevY ? 1 : -1;
+
+			var newXPos = oldPos.left + (this.speed * xOffset);
+			var newYPos = oldPos.top + (this.speed * yOffset);
+			// console.log(" " +newXPos + " " + oldPos.top);
+
+			$.each(paddleArray, function( index, value ) {
+				touchPaddle[index] = (newYPos > paddleArray[index].element.position().top && newYPos < paddleArray[index].element.position().top + paddleArray[index].paddleHeight);			
+			});	
+
+			if(newXPos == paddleArray[0].element.position().left + paddleArray[0].element.width() && touchPaddle[0]) {
+				this.prevX = !this.prevX;
+			}
+			if(newXPos == paddleArray[1].element.position().left - paddleArray[1].element.width() && touchPaddle[1]) {
+				this.prevX = !this.prevX;
+			}
+			if(touchPaddle[0]) {
+				console.log("touhch paddleArray")
+			}
+			//Checking for collisions
+
+
+
+			if(newXPos < 0 || newXPos > $(window).width()) {
+				this.prevX = !this.prevX;
+			}
+			if(newYPos < 0 || newYPos > $(window).height()) {
+				this.prevY = !this.prevY;
+			}
+			this.element.offset({top: newYPos, left: newXPos});
+		};
+
+	</script>
+	<style>
+		.bar {
+			width:10px;
+			position: absolute;
+			background-color:black;
+		}
+		.ball {
+			width:10px;
+			height:10px;
+			position: absolute;
+			top:10px;
+			left:1000px;
+			background: blue;
+		}
+
+
+	</style>
+</head>
+<body>
+	<div class="bar" id="1"></div>
+	<div class="bar" id="2"></div>
+	<div class="ball"></div>
+</body>
+</html>
