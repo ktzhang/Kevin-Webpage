@@ -59,7 +59,7 @@
 
 				setInterval(function() {
 					ball.move(paddleArray);
-				}, 10);
+				}, 50);
 				// while(gameStart && counter < 50) {
 
 				// 	ball.move();
@@ -108,6 +108,7 @@
 		Ball.prototype.move = function(paddleArray) {
 			var touchPaddle = [];
 
+			var didSwitch = false;
 			var oldPos = this.element.position(); 
 			var xOffset = this.prevX ? 1 : -1;
 			var yOffset = this.prevY ? 1 : -1;
@@ -127,26 +128,36 @@
 									);			
 			});	
 
+			//Bouncing left paddle
 			if(newXPos == paddleArray[0].element.position().left + paddleArray[0].element.width() && touchPaddle[0]) {
 				this.prevX = !this.prevX;
+				didSwitch = true;
 			}
+
+			//Bouncing right paddle
 			if(newXPos + ballWidth == paddleArray[1].element.position().left - paddleArray[1].element.width() && touchPaddle[1]) {
 				this.prevX = !this.prevX;
+				didSwitch = true;
 			}
-			if(touchPaddle[0]) {
-				console.log("touhch paddleArray")
-			}
+			
+
 			//Checking for collisions
-
-
-
 			if(newXPos < 0 || newXPos + ballWidth > $(window).width()) {
 				this.prevX = !this.prevX;
+				didSwitch = true;
 			}
 			if(newYPos < 0 || newYPos + ballHeight > $(window).height()) {
 				this.prevY = !this.prevY;
+				didSwitch = true;
 			}
-			this.element.offset({top: newYPos, left: newXPos});
+
+
+			//Calling the movement
+			if(!didSwitch) {
+				this.element.offset({top: newYPos, left: newXPos});
+			} else {
+				this.move(paddleArray);
+			}
 		};
 
 	</script>
