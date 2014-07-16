@@ -9,6 +9,7 @@
 			(function() {
 				var paddleHeight = 100;
 				var maxPaddles = 2;
+				var ballSpeed = 10; 	//interval for ball movement
 				var gameStart = true;
 
 				//Instantiate the two paddles
@@ -27,6 +28,13 @@
 				//Instantiating the ball
 				var ball = new Ball($(".ball"));
 
+				var ballMoving = true;
+				var moveBallFunction = function() {
+					ball.move(paddleArray)
+				};
+
+				var moveBall = moveBallInterval(moveBallFunction, ballSpeed);
+				
 				//Handling keypresses
 				$("body").keypress(function(event) {
 					var keyPressed;
@@ -47,29 +55,31 @@
 							paddleArray[0].move(1);
 							keyPressed = "a"
 							break;
+						case 32: 
+							if(ballMoving) {
+								clearInterval(moveBall);
+								ballMoving = false;
+							} else {
+								moveBall = moveBallInterval(moveBallFunction, ballSpeed);
+								ballMoving = true;
+							}
 						default:
 							keyPressed = null
-							ball.move(paddleArray);
 							break;
 					}
-					console.log("KeyPressed = " + keyPressed);
+					console.log("KeyPressed = " + event.keyCode);
 		  		});
-
-
-				//Starting the animation loop!
-
-				setInterval(function() {
-					ball.move(paddleArray);
-				}, 50);
-				// while(gameStart && counter < 50) {
-
-				// 	ball.move();
-				// 	counter++;
-				// }
-
 			})();	
 
 		});
+
+		//Calling the setinterval passing in an interval and function
+		function moveBallInterval(moveFunction, interval) {
+			var moveBall = setInterval(function() {
+				moveFunction();
+			}, interval);
+			return moveBall;
+		}
 
 		//------Paddle Class
 		function Paddle(element) {
