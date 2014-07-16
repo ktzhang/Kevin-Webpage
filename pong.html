@@ -104,8 +104,6 @@
 			this.speed = 5;
 			this.prevX = 1;
 			this.prevY = 1;
-			this.width = element.width();
-			this.height = element.height();
 		}
 		Ball.prototype.move = function(paddleArray) {
 			var touchPaddle = [];
@@ -118,14 +116,21 @@
 			var newYPos = oldPos.top + (this.speed * yOffset);
 			// console.log(" " +newXPos + " " + oldPos.top);
 
+			var ballHeight = this.element.height();
+			var ballWidth = this.element.width();
 			$.each(paddleArray, function( index, value ) {
-				touchPaddle[index] = (newYPos > paddleArray[index].element.position().top && newYPos < paddleArray[index].element.position().top + paddleArray[index].paddleHeight);			
+				var top = paddleArray[index].element.position().top;
+
+				touchPaddle[index] = (	
+										newYPos +ballHeight > top && 
+										newYPos - ballHeight < top + paddleArray[index].paddleHeight
+									);			
 			});	
 
 			if(newXPos == paddleArray[0].element.position().left + paddleArray[0].element.width() && touchPaddle[0]) {
 				this.prevX = !this.prevX;
 			}
-			if(newXPos == paddleArray[1].element.position().left - paddleArray[1].element.width() && touchPaddle[1]) {
+			if(newXPos + ballWidth == paddleArray[1].element.position().left - paddleArray[1].element.width() && touchPaddle[1]) {
 				this.prevX = !this.prevX;
 			}
 			if(touchPaddle[0]) {
@@ -135,10 +140,10 @@
 
 
 
-			if(newXPos < 0 || newXPos > $(window).width()) {
+			if(newXPos < 0 || newXPos + ballWidth > $(window).width()) {
 				this.prevX = !this.prevX;
 			}
-			if(newYPos < 0 || newYPos > $(window).height()) {
+			if(newYPos < 0 || newYPos + ballHeight > $(window).height()) {
 				this.prevY = !this.prevY;
 			}
 			this.element.offset({top: newYPos, left: newXPos});
@@ -152,8 +157,8 @@
 			background-color:black;
 		}
 		.ball {
-			width:10px;
-			height:10px;
+			width:50px;
+			height:50px;
 			position: absolute;
 			top:10px;
 			left:1000px;
