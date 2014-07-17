@@ -106,21 +106,28 @@
 		  		var leftScoreElement = $(".leftScore");
 		  		var rightScoreElement = $(".rightScore");
 		  		var colonElement = $(".colon");
-		  		var colonWidth = colonElement.width()/2;
-		  		colonElement.css("margin-left", -1 * colonWidth);
+		  		initElements();
+
+		  		$(window).resize(function() {
+		  			initElements();
+		  		});
+
+		  		function initElements() {
+			  		var colonWidth = colonElement.width()/2;
+			  		colonElement.css("margin-left", -1 * colonWidth);
+
+			  		var colonLeft = colonElement.position().left;
+			  		var colonTop = colonElement.position().top;
+
+			  		var leftMargin = 10;
+			  		var leftScoreLeft = colonLeft - colonWidth - leftScoreElement.width()- leftMargin;
+			  		leftScoreElement.offset({left: leftScoreLeft, top: colonTop + 8}).css("text-align", "right");
 
 
-		  		var colonLeft = colonElement.position().left;
-		  		var colonTop = colonElement.position().top;
+			  		var rightScoreLeft = colonLeft + colonWidth + leftMargin; 
+			  		rightScoreElement.offset({left: rightScoreLeft, top: colonTop + 8}).css("text-align, left");
 
-		  		var leftMargin = 10;
-		  		var leftScoreLeft = colonLeft - colonWidth - leftScoreElement.width()- leftMargin;
-		  		leftScoreElement.offset({left: leftScoreLeft, top: colonTop + 8}).css("text-align", "right");
-
-
-		  		var rightScoreLeft = colonLeft + colonWidth + leftMargin; 
-		  		rightScoreElement.offset({left: rightScoreLeft, top: colonTop + 8}).css("text-align, left");
-
+		  		}
 		  		function updateScores(scores) {
 		  			leftScoreElement.html(scores[0]);
 					rightScoreElement.html(scores[1]);
