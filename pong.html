@@ -112,8 +112,13 @@
 		  		var colonLeft = colonElement.position().left;
 		  		var colonTop = colonElement.position().top;
 
-		  		leftScoreElement.offset({left: colonLeft - colonWidth - leftScoreElement.width(), top: colonTop});
-		  		rightScoreElement.offset({left: colonLeft + colonWidth, top: colonTop});
+		  		var leftMargin = 10;
+		  		var leftScoreLeft = colonLeft - colonWidth - leftScoreElement.width()- leftMargin;
+		  		leftScoreElement.offset({left: leftScoreLeft, top: colonTop + 8}).css("text-align", "right");
+
+
+		  		var rightScoreLeft = colonLeft + colonWidth + leftMargin; 
+		  		rightScoreElement.offset({left: rightScoreLeft, top: colonTop + 8}).css("text-align, left");
 
 			})();	
 
@@ -271,16 +276,12 @@
 			position: absolute;
 			left: 50%;
 			top:10%;
-			width:100px;
 			text-align: center;
-			background-color: blue;
 			opacity: 0.5;
-			height: 10px;
+			font-size: 40px;
 		}
 		.score {
-			width:50px;
-			height:50px;
-			background-color: yellow;
+			font-size:30px;
 		}
 
 
@@ -290,9 +291,9 @@
 	<div class="bar" id="1"></div>
 	<div class="bar" id="2"></div>
 	<div class="ball"></div>
-	<div class="leftScore score">1</div>
+	<div class="leftScore score">0</div>
 	<div class="colon">:</div>
-	<div class="rightScore score">1</div>
+	<div class="rightScore score">0</div>
 	<div class="reset">Reset</div>
 </body>
 </html>
