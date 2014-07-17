@@ -21,12 +21,6 @@
 				var moveBall;
 
 
-				//Instantiate reset
-
-				
-
-
-
 				//Instantiate the two paddles
 				$(".bar").height(paddleHeight);
 				var paddleArray = [];
@@ -60,8 +54,12 @@
 					}
 				};
 
-				moveBall = moveBallInterval(moveBallFunction, ballSpeed);
-				
+				//Starting the movement
+				function startMove() {
+					moveBall = moveBallInterval(moveBallFunction, ballSpeed);
+				}
+				startMove();
+
 				//Handling keypresses
 				$("body").keypress(function(event) {
 					var keyPressed;
@@ -97,9 +95,11 @@
 					console.log("KeyPressed = " + event.keyCode);
 		  		});
 
+				//Instantiating reset button
 		  		$(".reset").css("margin-left", "-" + $(this).width()/2).click(function(){ 
 						clearInterval(moveBall);
 						ball.element.offset({top:ballTopStart, left:ballLeftStart});
+						startMove();
 				});
 			})();	
 
@@ -144,12 +144,12 @@
 		//------Ball Class
 		function Ball(element) {
 			this.element = element;
-			this.speed = 5;
+			this.speed = 1;
 			this.prevX = 1;
 			this.prevY = 1;
 		}
 		Ball.prototype.move = function(paddleArray) {
-			var touchPaddle = [];
+			var touchPaddleY = [];
 
 			var didSwitch = false;
 			var oldPos = this.element.position(); 
@@ -165,20 +165,40 @@
 			$.each(paddleArray, function( index, value ) {
 				var top = paddleArray[index].element.position().top;
 
-				touchPaddle[index] = (	
-										newYPos +ballHeight > top && 
+				touchPaddleY[index] = (	
+										newYPos + ballHeight > top && 
 										newYPos - ballHeight < top + paddleArray[index].paddleHeight
 									);			
 			});	
 
 			//Bouncing left paddle
-			if(newXPos + this.speed == paddleArray[0].element.position().left + paddleArray[0].element.width() && touchPaddle[0]) {
+
+			var touchPaddleX = [];
+			var xDiff = [];
+			xDiff[0] = newXPos + this.speed -(paddleArray[0].element.position().left + paddleArray[0].element.width());
+			
+			touchPaddleX[0] = xDiff[0] < 0 && xDiff[0] >= -this.speed;
+			console.log(xDiff);
+
+			xDiff[1] = newXPos + ballWidth - this.speed - (paddleArray[1].element.position().left);
+			console.log(newXPos + this.speed + " " + (paddleArray[0].element.position().left + paddleArray[0].element.width()));
+			touchPaddleX[1] = xDiff[1] >= 0 && xDiff[1] < this.speed;
+
+
+
+
+
+			// console.log(touchPaddleX[0]);
+			if(touchPaddleX[0] && touchPaddleY[0]) {
+				console.log("hit left paddle!" + newXPos + " " + paddleArray[0].element.position().left);
+
 				this.prevX = !this.prevX;
 				didSwitch = true;
 			}
 
 			//Bouncing right paddle
-			if(newXPos + ballWidth - this.speed == paddleArray[1].element.position().left && touchPaddle[1]) {
+			if(touchPaddleX[1] && touchPaddleY[1]) {
+				console.log("hit right paddle!" + newXPos + " " + paddleArray[1].element.position().left);
 				this.prevX = !this.prevX;
 				didSwitch = true;
 			}
@@ -187,13 +207,16 @@
 			//-----Checking for collisions
 			//Hit the left
 			if(newXPos < 0) {
-				return -1;
+				// return -1;
+				this.prevX = !this.prevX;
 			}
 
 
 			//Hit the right
 			if(newXPos + ballWidth > $(window).width()) {
-				return 1;
+				// return 1;
+				this.prevX = !this.prevX;
+
  			}
 			if(newYPos < 0 || newYPos + ballHeight > $(window).height()) {
 				this.prevY = !this.prevY;
