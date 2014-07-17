@@ -12,12 +12,12 @@
 				var paddleWidth = 10;
 				var maxPaddles = 2;
 				var ballHeight = 20;
-				var ballSpeed = 10; 	//interval for ball movement
+				var ballSpeed = 1; 	//interval for ball movement
 				var ballTopStart = 0;
 				var ballLeftStart = $(window).width()/2;
 				//Game Variables
 				var gameStart = true;
-				var scores = [];
+				var scores = [0, 0];
 				var moveBall;
 
 
@@ -38,19 +38,20 @@
 				var ball = new Ball($(".ball"));
 				ball.element.width(ballHeight).height(ballHeight).offset({top:ballTopStart, left:ballLeftStart});
 
+
 				//Check if Ball is moving
 				var ballMoving = true;
 				var moveBallFunction = function() {
 					var didHit = ball.move(paddleArray);
 					if(didHit == -1) {
 						clearInterval(moveBall);
-						console.log("hit left");
 						scores[1]++;
+						updateScores(scores);
 					}
 					else if(didHit == 1) {
 						clearInterval(moveBall);
-						console.log("hit right");
 						scores[0]++;
+						updateScores(scores);
 					}
 				};
 
@@ -120,6 +121,12 @@
 		  		var rightScoreLeft = colonLeft + colonWidth + leftMargin; 
 		  		rightScoreElement.offset({left: rightScoreLeft, top: colonTop + 8}).css("text-align, left");
 
+		  		function updateScores(scores) {
+		  			leftScoreElement.html(scores[0]);
+					rightScoreElement.html(scores[1]);
+				}
+
+
 			})();	
 
 		});
@@ -157,8 +164,6 @@
 		Paddle.prototype.getPos = function() {
 			return this.element.position().top;
 		}
-
-
 
 		//------Ball Class
 		function Ball(element) {
@@ -203,10 +208,6 @@
 			console.log(newXPos + this.speed + " " + (paddleArray[0].element.position().left + paddleArray[0].element.width()));
 			touchPaddleX[1] = xDiff[1] >= 0 && xDiff[1] < this.speed;
 
-
-
-
-
 			// console.log(touchPaddleX[0]);
 			if(touchPaddleX[0] && touchPaddleY[0]) {
 				console.log("hit left paddle!" + newXPos + " " + paddleArray[0].element.position().left);
@@ -226,16 +227,15 @@
 			//-----Checking for collisions
 			//Hit the left
 			if(newXPos < 0) {
-				// return -1;
-				this.prevX = !this.prevX;
+				return -1;
+				// this.prevX = !this.prevX;
 			}
 
 
 			//Hit the right
 			if(newXPos + ballWidth > $(window).width()) {
-				// return 1;
-				this.prevX = !this.prevX;
-
+				return 1;
+				// this.prevX = !this.prevX;
  			}
 			if(newYPos < 0 || newYPos + ballHeight > $(window).height()) {
 				this.prevY = !this.prevY;
